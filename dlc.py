@@ -12,14 +12,12 @@
 # an alternative Download-Manager ausgegeben, die notfalls geblacklistet
 # werden können, sofern ein Missbrauch (massenhafte Entschlüsslung zum Melden
 # von Links) vorliegt.
-#
-# Based on pyload/module/plugins/container/DLC_27.pyc –– using [uncompyle][1]
-#
-# [1]: https://github.com/sysfrog/uncompyle/
+
+# TODO: app-key requires a different destType in API, needs researching
 
 import sys; reload(sys); sys.setdefaultencoding('utf-8')
 
-import base64, re
+import base64
 from Crypto.Cipher import AES
 import urllib2
 from HTMLParser import HTMLParser
