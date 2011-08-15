@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>RSDF/DLC Decrypter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="/favicon.ico" rel="shortcut icon" />
+    <link rel="stylesheet" type="text/css" href="/style.css" media="screen">
+    <link href="/" rel="home" />
+</head>
+<body>
+    <div id="header">
+    </div>
+
+    <div id="wrapper">
+        <div id="sidebar">
+            <h2>Links</h2>
+            <ul>
+                <li><a href="https://github.com/posativ/rspython">GitHub</a></li>
+                <li><a href="http://pyload.org/">pyload</a></li>
+            </ul>
+        </div>
+
+        <div id="main">
+            <h2>Decrypt RSDF</h2>
+            <form method="POST" action="/decrypt/rsdf">
+                <textarea rows="1" cols="60" name="data"></textarea>
+                <input type="submit" value="decrypt!" />
+            </form>
+        
+            <h2>Decrypt DLC</h2>
+            <form method="POST" action="/decrypt/dlc">
+                <textarea rows="1" cols="60" name="data"></textarea>
+                <input type="submit" value="decrypt!" />
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>
