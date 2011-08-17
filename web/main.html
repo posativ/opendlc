@@ -1,40 +1,51 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
     <title>RSDF/DLC Decrypter</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="/favicon.ico" rel="shortcut icon" />
     <link rel="stylesheet" type="text/css" href="/style.css" media="screen">
-    <link href="/" rel="home" />
-</head>
-<body>
+  </head>
+  <body>
+
     <div id="header">
     </div>
 
     <div id="wrapper">
         <div id="sidebar">
-            <h2>Links</h2>
+            <h2>Software</h2>
             <ul>
-                <li><a href="https://github.com/posativ/rspython">GitHub</a></li>
-                <li><a href="http://pyload.org/">pyload</a></li>
+                <li><a href="/lastsync">lastsync</a></li>
+                <li><a href="/lilith">lilith</a></li>
+                <li><a href="/luna">luna</a></li>
+                <li><a href="https://github.com/posativ/rspython">rspython</a></li>
+            </ul>
+            
+            
+            <h2>Services</h2>
+            <ul class="h2">
+                <li><a href="/decrypt/">decrypt!</a></li>
             </ul>
         </div>
 
         <div id="main">
             <h2>Decrypt RSDF</h2>
-            <form method="POST" action="/decrypt/rsdf">
-                <textarea rows="1" cols="60" name="data"></textarea>
-                <input type="submit" value="decrypt!" />
-            </form>
-        
-            <h2>Decrypt DLC</h2>
-            <form method="POST" action="/decrypt/dlc">
-                <textarea rows="1" cols="60" name="data"></textarea>
-                <input type="submit" value="decrypt!" />
-            </form>
-        </div>
+<form method="POST" action="/decrypt/rsdf">
+    <textarea rows="1" cols="60" name="data"></textarea>
+    <input type="submit" value="decrypt!" />
+</form>
 
+<h2>Decrypt DLC</h2>
+<form method="POST" action="/decrypt/dlc">
+    <textarea rows="1" cols="60" name="data"></textarea>
+    <input type="submit" value="decrypt!" />
+</form>
+
+<h2>Decrypt URL</h2>
+<form method="POST" action="/decrypt/url">
+    <textarea rows="1" cols="60" name="data"></textarea>
+    <input type="submit" value="decrypt!" />
+</form>
+        </div>
     </div>
-</body>
+  </body>
 </html>
