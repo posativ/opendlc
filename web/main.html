@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>RSDF/DLC Decrypter</title>
+    <title>RSDF/CCF/DLC Decrypter</title>
     <link rel="stylesheet" type="text/css" href="/style.css" media="screen">
   </head>
   <body>
@@ -29,19 +29,22 @@
 
         <div id="main">
             <h2>Decrypt RSDF</h2>
-<form method="POST" action="/decrypt/rsdf">
+<form method="POST" action="/decrypt/rsdf" enctype="multipart/form-data">
+    <input type="file" name="file"/> or direct input<br />
     <textarea rows="1" cols="60" name="data"></textarea>
     <input type="submit" value="decrypt!" />
 </form>
 
 <h2>Decrypt DLC</h2>
-<form method="POST" action="/decrypt/dlc">
+<form method="POST" action="/decrypt/dlc" enctype="multipart/form-data">
+    <input type="file" name="file"/> or direct input<br />
     <textarea rows="1" cols="60" name="data"></textarea>
     <input type="submit" value="decrypt!" />
 </form>
 
-<h2>Decrypt URL</h2>
-<form method="POST" action="/decrypt/url">
+<h2>Decrypt CCF</h2>
+<form method="POST" action="/decrypt/ccf" enctype="multipart/form-data">
+    <input type="file" name="file"/> or direct input<br />
     <textarea rows="1" cols="60" name="data"></textarea>
     <input type="submit" value="decrypt!" />
 </form>
