@@ -10,7 +10,7 @@
 
 import sys, os
 
-from os.path import isfile, expanduser
+from os.path import isfile, isdir, expanduser, join
 from urllib import urlretrieve, urlopen, urlencode
 from time import time
 from collections import defaultdict
@@ -78,7 +78,7 @@ def download(link, user, passwd, **kwargs):
     url = 'https://' + host + '/cgi-bin/rsapi.cgi?sub=download&' \
           + urlencode({'fileid': fileid, 'filename': filename, 'login': user, 'password': passwd})
     timestamp = time() # get time spend on downloading each link
-    urlretrieve(url, filename, reporthook=progress)
+    urlretrieve(url, join(options.dir, filename), reporthook=progress)
     sys.stdout.write('\r' + ' '*int(os.popen('stty size', 'r').read().split()[1]))
     
     if kwargs.get('checksum', False):
@@ -103,7 +103,8 @@ if __name__ == '__main__':
     usage = '%prog [options] LINK LINKLIST ...'
     
     options = [
-        make_option("-d",dest="dir", metavar="DIR", help="destination directory"),
+        make_option("-d",dest="dir", metavar="DIR", help="destination directory",
+                    default=''),
         make_option("-u", dest="login", default=None,
                     help="rapidshare login as 'user:passwd'"),
         make_option("-s", "--save-login", dest="save", action='store_true',
@@ -118,12 +119,17 @@ if __name__ == '__main__':
     if options.login:
         user, passwd = options.login.split(':', 1)
         if options.save:
-            open('%s/.rsget.py' % expanduser('~'), 'w').write(options.login)
-    elif isfile('%s/.rsget.py' % expanduser('~')):
-        user, passwd = open('%s/.rsget.py' % expanduser('~')).readline().split(':', 1)
+            open(expanduser('~/.rsget.py'), 'w').write(options.login)
+    elif isfile(expanduser('~/.rsget.py')):
+        user, passwd = open(expanduser('~/.rsget.py')).readline().split(':', 1)
     else:
         print >> sys.stderr, 'no login credentials commited, existing...'
         sys.exit(1)
+    
+    if options.dir:
+        options.dir = expanduser(options.dir)
+        if not isdir(options.dir):
+            print >> sys.stderr, "'%s' is no valid directory" % options.dir
     
     links = []
     for item in args:
@@ -134,14 +140,16 @@ if __name__ == '__main__':
             
     for link in links:
         try:
-            download(link, user, passwd, **{'checksum': options.checksum})
+            download(link, user, passwd, **{'checksum': options.checksum,
+                                            'dir': options.dir})
         except InvalidURL:
             print >> sys.stderr, "'%s' is no valid url, skipping..." % link
         except FileNotFound:
             print >> sys.stderr, "'%s' file not found, skipping..." % link.rsplit('/', 1)[-1]
         except FileCorruptError:
             try:
-                download(link, user, passwd, **{'checksum': options.checksum})
+                download(link, user, passwd, **{'checksum': options.checksum,
+                                                'dir': options.dir})
             except FileCorruptError:
                 print "\rchecksum mismatch of '%s', skipping..." % link.rsplit('/', 1)[-1][-32:]
         except UnknownError, e:
