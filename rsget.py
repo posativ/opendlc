@@ -49,7 +49,7 @@ def download(link, user, passwd, **kwargs):
             # [>] + 4 spaces + ppsize + 1 empty
             columns = int(os.popen('stty size', 'r').read().split()[1]) - 18
             p = int(round((1.0*(count*blocksize)/length)*columns))
-            sys.stdout.write('\r[' + '='*p + '>' + ' '*(columns-p) + ']    ' + ppsize(TD['count']))
+            sys.stdout.write('\r[' + '='*p + '>' + ' '*(columns-p) + ']    ' + ppsize(2*TD['count']))
             sys.stdout.flush()
             TD['delta'] = 0
             TD['count'] = 0
