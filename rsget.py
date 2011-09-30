@@ -37,6 +37,58 @@ def ppsize(num):
         num /= 1024.0
 
 
+def checkfiles(*links, **options):
+    """check if a given bunch of links is online.  Refuses if request url is
+    longer than 10000 bytes, we split them into parts, then."""
+    
+    def check(links):
+        """check if bunch of links is online.  Returns True of everything's ok
+        else False and print to stderr which link is offline.
+        """
+        response = urlopen('https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=checkfiles&' \
+                   + urlencode({'files': ','.join([x[0] for x in links]), 
+                                'filenames': ','.join([x[1] for x in links])})).read()
+        if response.find('ERROR') > -1:
+            raise UnknownError
+            
+        everythingok = True
+        for line in response.split('\n'):
+            if not line.strip():
+                continue
+            fileid, filename, size, spam = line.strip().split(',', 3)
+            if int(size) == 0:
+                print >> sys.stderr, '../' + fileid + '/' + filename, 'is offline'
+                if everythingok:
+                    everythingok = False
+        return everythingok
+        
+    
+    _links = [tuple(l.strip().rsplit('/', 2)[1:]) for l in links][::-1]
+    bunch, length = [], 0
+    isonline = True
+    
+    while True:    
+        
+        fileid, filename = _links.pop()
+        length += len(fileid) + len(filename)
+        bunch.append((fileid, filename))
+        if length > 7800 or not _links: # just to be safe, we have some overhead
+            try:
+                if not check(bunch):
+                    isonline = False
+            except UnknownError:
+                if not options.get('ignore', False):
+                    print >> sys.stderr, 'failed to check links'
+                    sys.exit(1)
+                    
+            
+            if not _links:
+                break
+            bunch, length = [], 0
+    
+    return isonline
+
+
 def download(link, user, passwd, **kwargs):
     
     def progress(count, blocksize, length):
@@ -110,7 +162,9 @@ if __name__ == '__main__':
         make_option("-s", "--save-login", dest="save", action='store_true',
                     help="save login data to ~/.rsget.py", default=False),
         make_option("-c", "--check-sum", dest="checksum", action='store_true',
-                    help="check md5sum of downloads", default=False)
+                    help="check md5sum of downloads", default=False),
+        make_option("-i", "--ignore", dest="ignore", action='store_true',
+                    help="ignore errors on checkfiles", default=False)
         ]
         
     parser = OptionParser(option_list=options, usage=usage)
@@ -137,11 +191,20 @@ if __name__ == '__main__':
             links += [l.strip() for l in open(item).readlines()]
         else:
             links.append(item)
+    
+    if not links:
+        parser.print_usage()
+        sys.exit(1)
+            
+    if not checkfiles(*links, ignore=options.ignore) and not options.ignore:
+        query = raw_input('continue [y/n]? ') == 'n'
+        if query == 'n':
+            sys.exit(0)
             
     for link in links:
         try:
             download(link, user, passwd, **{'checksum': options.checksum,
-                                            'dir': options.dir})
+                        'dir': options.dir})
         except InvalidURL:
             print >> sys.stderr, "'%s' is no valid url, skipping..." % link
         except FileNotFound:
@@ -149,7 +212,7 @@ if __name__ == '__main__':
         except FileCorruptError:
             try:
                 download(link, user, passwd, **{'checksum': options.checksum,
-                                                'dir': options.dir})
+                        'dir': options.dir})
             except FileCorruptError:
                 print "\rchecksum mismatch of '%s', skipping..." % link.rsplit('/', 1)[-1][-32:]
         except UnknownError, e:
