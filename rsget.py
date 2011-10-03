@@ -16,24 +16,22 @@ from time import time
 from collections import defaultdict
 from hashlib import md5
 
+# a quick and dirty hack to store values for progress bar
 TD = defaultdict(int)
 
 class ConnectionError(Exception): pass
 class FileNotFound(Exception): pass
 class InvalidURL(Exception): pass
 class FileCorruptError(Exception): pass
-#class NoSimultaneousDownloads(Exception): pass
-#class DownloadLimit(Exception): pass
-#class Timeout(Exception): pass
 class UnknownError(Exception): pass
 
 
-def ppsize(num):
+def ppsize(num, fmt='%3.1f'):
     '''pretty-print filesize.
     http://blogmag.net/blog/read/38/Print_human_readable_file_size'''
     for x in ['B','KB','MB','GB','TB']:
         if num < 1024.0:
-            return "%3i %s" % (num, x + '/sec')
+            return fmt % num + ' ' + x
         num /= 1024.0
 
 
@@ -61,14 +59,12 @@ def checkfiles(*links, **options):
                 if everythingok:
                     everythingok = False
         return everythingok
-        
     
     _links = [tuple(l.strip().rsplit('/', 2)[1:]) for l in links][::-1]
     bunch, length = [], 0
     isonline = True
     
-    while True:    
-        
+    while True:
         fileid, filename = _links.pop()
         length += len(fileid) + len(filename)
         bunch.append((fileid, filename))
@@ -80,8 +76,6 @@ def checkfiles(*links, **options):
                 if not options.get('ignore', False):
                     print >> sys.stderr, 'failed to check links'
                     sys.exit(1)
-                    
-            
             if not _links:
                 break
             bunch, length = [], 0
@@ -90,25 +84,48 @@ def checkfiles(*links, **options):
 
 
 def download(link, user, passwd, **kwargs):
+    """downloads a link using rapidshare premium account and displaying
+    a neat progress bar."""
     
     def progress(count, blocksize, length):
-        """realtime urlretrieve progress bar.  """
-        
+        """realtime urlretrieve progress bar.  Something like this
+        [=============134.7/247.8 MB=>           ] 137 kb/sec"""
+    
         global TD
         TD['count'] += blocksize
         if TD['delta'] >= 0.5:
-            # progress bar
-            # [>] + 4 spaces + ppsize + 1 empty
             columns = int(os.popen('stty size', 'r').read().split()[1]) - 18
+            if columns % 2 == 1:
+                columns -= 1
             p = int(round((1.0*(count*blocksize)/length)*columns))
-            sys.stdout.write('\r[' + '='*p + '>' + ' '*(columns-p) + ']    ' + ppsize(2*TD['count']))
+
+            def f(p):
+                '''indicator before counting information'''
+                if p < (columns/2 - 7):
+                    return ' '
+                elif p == (columns/2 - 7) or p == (columns/2 + 7):
+                    return '>'
+                else:
+                    return '='
+        
+            g = lambda p: '=' if p == columns else '>'
+        
+            line = [
+                '\r[',
+                ('='*p + g(p)).ljust(columns/2 - 7) if p < (columns/2 - 7) else '='*(columns/2 - 7),
+                ppsize(count*blocksize)[:-3].rjust(5, f(p)) + '/' + ppsize(length).ljust(8, f(p)),
+                ' '*(columns/2 - 7) if p <= (columns/2 + 7) else ('='*(p-(columns/2+7)-1)+g(p)).ljust(columns/2 - 7),
+                ']',
+                ' '*6 + ppsize(2*TD['count'], '%3i').ljust(3) + '/sec'
+            ]
+        
+            sys.stdout.write(''.join(line))
             sys.stdout.flush()
             TD['delta'] = 0
             TD['count'] = 0
-        
-        TD['delta'] += time() - TD['time']
-        TD['time'] = time()
     
+        TD['delta'] += time() - TD['time']
+        TD['time'] = time()    
     
     if not link.startswith('http'):
         raise InvalidURL
