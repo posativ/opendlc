@@ -191,6 +191,8 @@ if __name__ == '__main__':
         user, passwd = options.login.split(':', 1)
         if options.save:
             open(expanduser('~/.rsget.py'), 'w').write(options.login)
+            print >> sys.stderr, 'login saved to ~/.rsget.py'
+            sys.exit(0)
     elif isfile(expanduser('~/.rsget.py')):
         user, passwd = open(expanduser('~/.rsget.py')).readline().split(':', 1)
     else:
