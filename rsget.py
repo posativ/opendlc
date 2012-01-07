@@ -94,7 +94,7 @@ def download(link, user, passwd, **kwargs):
         global TD
         TD['count'] += blocksize
         if TD['delta'] >= 0.5:
-            columns = int(os.popen('stty size', 'r').read().split()[1]) - 18
+            columns = int(os.popen('stty size', 'r').read().split()[1]) - 19
             if columns % 2 == 1:
                 columns -= 1
             p = int(round((1.0*(count*blocksize)/length)*columns))
