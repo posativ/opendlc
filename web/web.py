@@ -46,7 +46,10 @@ def decrypt(container=None):
     else:
         data = request.forms.get('data', '')
     if container == 'rsdf':
-        return '\n'.join(rsdf.decrypt(data))
+        try:
+            return '\n'.join(rsdf.decrypt(data))
+        except TypeError:
+            return 'unable to decrypt RSDF'
         
     elif container == 'dlc':
         try:

@@ -12,41 +12,31 @@
 
     <div id="wrapper">
         <div id="sidebar">
-            <h2>Software</h2>
-            <ul>
-                <li><a href="/lastsync">lastsync</a></li>
-                <li><a href="/lilith">lilith</a></li>
-                <li><a href="/luna">luna</a></li>
-                <li><a href="https://github.com/posativ/odlc">odlc</a></li>
-            </ul>
-            
-            
             <h2>Services</h2>
             <ul class="h2">
                 <li><a href="/decrypt/">decrypt!</a></li>
             </ul>
         </div>
-
         <div id="main">
             <h2>Decrypt RSDF</h2>
-<form method="POST" action="/decrypt/rsdf" enctype="multipart/form-data">
-    <input type="file" name="file"/> or direct input<br />
-    <textarea rows="1" cols="60" name="data"></textarea>
+<form class="rsdf" method="POST" action="/decrypt/rsdf" enctype="multipart/form-data">
+    <input type="file" name="file"/><span style="margin-left:20px">...or direct input</span><br />
+    <textarea rows="3" cols="70" name="data"></textarea><br />
     <input type="submit" value="decrypt!" />
 </form>
 
 <h2>Decrypt DLC</h2>
-<form method="POST" action="/decrypt/dlc" enctype="multipart/form-data">
-    <input type="file" name="file"/> or direct input<br />
-    <textarea rows="1" cols="60" name="data"></textarea>
+<form class="dlc" method="POST" action="/decrypt/dlc" enctype="multipart/form-data">
+    <input type="file" name="file"/><span style="margin-left:20px">...or direct input</span><br />
+    <textarea rows="3" cols="70" name="data"></textarea><br />
     <input type="submit" value="decrypt!" />
 </form>
 
 <h2>Decrypt CCF</h2>
-<form method="POST" action="/decrypt/ccf" enctype="multipart/form-data">
-    <input type="file" name="file"/> or direct input<br />
-    <textarea rows="1" cols="60" name="data"></textarea>
-    <input type="submit" value="decrypt!" />
+<form class="ccf" method="POST" action="/decrypt/ccf" enctype="multipart/form-data">
+    <input type="file" name="file"/><span style="margin-left:20px">...or direct input</span><br />
+    <textarea rows="3" cols="70" name="data"></textarea><br />
+    <input type="submit" value="decrypt!" class="button"/>
 </form>
         </div>
     </div>
