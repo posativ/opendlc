@@ -151,14 +151,14 @@ def download(link, user, passwd, **kwargs):
     sys.stdout.write('\r' + ' '*int(os.popen('stty size', 'r').read().split()[1]))
     
     if kwargs.get('checksum', False):
-        f = open(filename)
-        h = md5()
-        while True:
-            chunks = f.read(2048)
-            if chunks:
-                h.update(chunks)
-            else:
-                break
+        with open(join(kwargs.get('dir', ''), filename), 'r') as f:
+            h = md5()
+            while True:
+                chunks = f.read(2048)
+                if chunks:
+                    h.update(chunks)
+                else:
+                    break
         if h.hexdigest() != md5sum.lower():
             raise FileCorruptError
     
