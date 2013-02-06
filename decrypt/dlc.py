@@ -18,11 +18,14 @@
 # rsdc, load
 
 import sys; reload(sys); sys.setdefaultencoding('utf-8')
-
 import base64
-from Crypto.Cipher import AES
 import urllib2
+
+from cgi import escape
 from HTMLParser import HTMLParser
+
+from Crypto.Cipher import AES
+
 
 class Debase(HTMLParser):
     """DLC contains kinda XML, but every TEXT and ATTRIBUTE nodes are
@@ -35,13 +38,13 @@ class Debase(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         if attrs:
-            self.result.append('<%s %s>' % (tag, ' '.join(['%s="%s"' % (k, base64.standard_b64decode(v))
-                                        for k,v in attrs])))
+            self.result.append('<%s %s>' % (tag, ' '.join(
+                ['%s="%s"' % (k, escape(base64.standard_b64decode(v))) for k,v in attrs])))
         else:
              self.result.append('<%s>' % tag)
 
     def handle_data(self, data):
-        self.result.append(base64.standard_b64decode(data))
+        self.result.append(escape(base64.standard_b64decode(data).decode('utf-8', 'replace')))
     
     def handle_endtag(self, tag):
         self.result.append('</%s>' % tag)
